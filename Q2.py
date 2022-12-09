@@ -7,18 +7,18 @@ import seaborn as sns
 
 """
 def f(x):
-    # Test function - just sum of squares
+    # Test function - just sum of squares - not used in actual question
     return np.dot(x, x)
 
 def grad_f(x):
-    # Test function - gradient of f(x)
+    # Test function - gradient of f(x) - not used in actual question
     return 2*x
 """
 
 # Extract the A matrix from the csv file
-A = np.genfromtxt(f"C:/Users/jmc261/git/4M17/data/Q1/A3.csv", delimiter=',')
+A = np.genfromtxt(f"C:/Users/jamie/git/4M17/data/Q1/A3.csv", delimiter=',')
 # Extract the b vector from the csv file
-b = np.genfromtxt(f"C:/Users/jmc261/git/4M17/data/Q1/b3.csv", delimiter=',')
+b = np.genfromtxt(f"C:/Users/jamie/git/4M17/data/Q1/b3.csv", delimiter=',')
 
 # Form the 'tilde' matrices
 m, n = A.shape
@@ -108,7 +108,6 @@ xn, l1_norms, convergence_norms = perform_iter(f, grad_f, beta, alpha, xn, l1_no
 
 # Convergence criteria - keep iterating until the function changes very little between iterations
 while np.abs(convergence_norms[-2] - convergence_norms[-1]) > 0.001:
-    #print(convergence_norms[-2] - convergence_norms[-1])
     xn, l1_norms, convergence_norms = perform_iter(f, grad_f, beta, alpha, xn, l1_norms, convergence_norms)
 
 end = timer()
@@ -116,19 +115,21 @@ print(end-start)
 
 # Plot evolution of l1_norms vs iteration
 
-print("We here")
-
 # Find the number of iterations, create x values
 no_iters = l1_norms.shape[0]
+
+min_error_norms = l1_norms - l1_norms[-1]
+
 x = np.arange(no_iters) + 1
 
 # Add data to a pandas dataframe, so seaborn can be used to plot
-df = pd.DataFrame(np.column_stack([x, l1_norms]), columns = ["Iteration", "l1_norm"])
+df = pd.DataFrame(np.column_stack([x, min_error_norms]), columns = ["Iteration", "l1_norm"])
 
 # Set up a semi-log scale
 fig, ax1 = plt.subplots()
 ax1.set(xscale='log', yscale='linear')
 
 sns.lineplot(data=df, x="Iteration", y="l1_norm", ax=ax1)
+ax1.set_ylabel("Minimisation Error")
 
 plt.show()
